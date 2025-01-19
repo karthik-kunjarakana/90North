@@ -1,4 +1,3 @@
-
 ```markdown
 # Chat Application with Responsive Webpage and AWS Integration
 
