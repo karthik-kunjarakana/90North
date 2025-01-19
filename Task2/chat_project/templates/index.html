@@ -1,0 +1,78 @@
+{%extends "base.html"%}
+{% comment %} <h1>Hi</h1> {% endcomment %}
+{% block title %}Chat Home{% endblock %}
+
+{% block content %}
+<div class="row g-0">
+  <div class="col-3 bg-dark text-white vh-100" id="left-sidebar">
+    <h5 class="p-3">Registered Users</h5>
+    <button class="btn btn-secondary w-100 mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#userList" aria-expanded="true" aria-controls="userList">
+      Show/Hide Users
+    </button>
+    <div class="collapse show" id="userList">
+      <ul class="list-group">
+        {% for user in users %}
+          <li class="list-group-item list-group-item-action" onclick="loadChat('{{ user.username }}')">
+            {{ user.username }}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="col-9 vh-100 d-flex flex-column">
+    <div class="chat-header bg-light p-3">
+      <h5 id="chatWith">Select a User to Chat</h5>
+    </div>
+    <div class="chat-body flex-grow-1 p-3 bg-light overflow-auto" id="chatBody">
+    </div>
+    <div class="chat-footer p-3 bg-white">
+      <form id="messageForm">
+        <div class="input-group">
+          <input type="text" id="messageInput" class="form-control" placeholder="Type a message..." required>
+          <button type="submit" class="btn btn-primary">Send</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentChatUser = "";
+
+  function loadChat(username) {
+    currentChatUser = username;
+    document.getElementById("chatWith").innerText = "Chat with " + username;
+
+    fetch(`/get_messages/${username}/`)
+      .then(response => response.json())
+      .then(data => {
+        const chatBody = document.getElementById("chatBody");
+        chatBody.innerHTML = "";
+        data.messages.forEach(msg => {
+          const message = document.createElement("div");
+          message.className = msg.sender === "{{ request.user.username }}" ? "text-end mb-2" : "text-start mb-2";
+          message.innerHTML = `<span class="badge bg-${msg.sender === "{{ request.user.username }}" ? "primary" : "secondary"}">${msg.text}</span>`;
+          chatBody.appendChild(message);
+        });
+      });
+  }
+
+  document.getElementById("messageForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+    const message = document.getElementById("messageInput").value;
+
+    fetch(`/send_message/${currentChatUser}/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": "{{ csrf_token }}"
+      },
+      body: JSON.stringify({ text: message })
+    }).then(() => {
+      document.getElementById("messageInput").value = "";
+      loadChat(currentChatUser);
+    });
+  });
+</script>
+{% endblock %}

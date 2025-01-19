@@ -1,0 +1,30 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+  }
+  
+  #left-sidebar {
+    overflow-y: auto;
+  }
+  
+  .chat-header {
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .chat-footer {
+    border-top: 1px solid #ddd;
+  }
+  
+  .chat-body {
+    background-color: #fff;
+    padding: 1rem;
+  }
+  
+  .list-group-item {
+    cursor: pointer;
+  }
+  
+  .list-group-item:hover {
+    background-color: #f1f1f1;
+  }
+  
