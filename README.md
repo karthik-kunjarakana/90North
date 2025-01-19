@@ -1,4 +1,3 @@
-Apologies for the confusion. Here's a tailored **README.md** based on your end submission:
 
 ```markdown
 # Chat Application with Responsive Webpage and AWS Integration
